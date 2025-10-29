@@ -1,64 +1,94 @@
+# Unified Application Configuration File
+# Supports Production, Development, and Experimental/Simulator modes.
 
-# Production Application Configuration
+# --- GLOBAL SETTINGS ---
+# Settings that are consistent across environments or set via external variables.
 application:
   name: DevOpsSimulator
-  version: 1.0.0
-  environment: production
+  version: 1.0.0 # Primary stable version
   
 server:
   host: 0.0.0.0
-  port: 8080
   ssl_enabled: true
   
-logging:
-  level: INFO
-  format: json
-  output: /var/log/app.log
-  
-database:
-  host: prod-db.example.com
-  port: 5432
-  name: devops_prod
-  
-features:
-  auto_scaling: true
-  load_balancer: enabled
-  backup_enabled: true
-# Development Application Configuration
-application:
-  name: DevOpsSimulator
-  version: 2.0.0-beta
-  environment: development
-  
-server:
-  host: localhost
-  port: 3000
-  ssl_enabled: false
-  hot_reload: true
-  
-logging:
-  level: DEBUG
-  format: pretty
-  output: console
-  show_stack_trace: true
-  
-database:
-  host: localhost
-  port: 5432
-  name: devops_dev
-  
-features:
-  auto_scaling: false
-  load_balancer: disabled
-  backup_enabled: false
-  experimental_features: true
-  
+# --- ENVIRONMENT PROFILES ---
+
+production:
+  # Stable, secure, high-performance settings
+  environment: production
+  server:
+    port: 8080
+  logging:
+    level: INFO
+    format: json
+    output: /var/log/app.log
+  database:
+    host: prod-db.example.com
+    port: 5432
+    name: devops_prod
+  features:
+    auto_scaling: true
+    load_balancer: enabled
+    backup_enabled: true
+
 development:
-  mock_external_apis: true
-  debug_mode: true
-  cors_enabled: true
-  
-notifications:
-  slack_webhook: "https://hooks.slack.com/services/XXX"
-  discord_webhook: "https://discord.com/api/webhooks/YYY"
-  email_alerts: false
+  # Fast iteration, debugging, local-only settings
+  environment: development
+  server:
+    host: localhost
+    port: 3000
+    ssl_enabled: false
+    hot_reload: true
+  logging:
+    level: DEBUG
+    format: pretty
+    output: console
+    show_stack_trace: true
+  database:
+    host: localhost
+    port: 5432
+    name: devops_dev
+  features:
+    auto_scaling: false
+    load_balancer: disabled
+    backup_enabled: false
+    experimental_features: true
+  development_tools:
+    mock_external_apis: true
+    debug_mode: true
+    cors_enabled: true
+  notifications:
+    slack_webhook: "https://hooks.slack.com/services/XXX"
+    discord_webhook: "https://discord.com/api/webhooks/YYY"
+    email_alerts: false
+
+simulator:
+  # EXPERIMENTAL/TESTING PROFILE (Most features DISABLED for main branch stability)
+  environment: testing
+  experimental_mode: false # Set to FALSE to prevent accidental enabling in main branch
+  server:
+    host: 0.0.0.0
+    port: 9000
+    multi_port_enabled: false # Disabled for stability
+    # multi_port: [9000, 9001, 9002] # Commented out array to maintain YAML validity
+  logging:
+    level: DEBUG # Downgrade TRACE to DEBUG for stability
+    format: json # Use standard format
+    output: /var/log/experimental.log
+    ai_analysis: disabled # Disabled
+  database:
+    host: cluster.example.com
+    port: 5432
+    name: devops_experimental
+    distributed: false # Disabled
+  features:
+    auto_scaling: false # Downgrade to false
+    load_balancer: disabled # Downgrade to disabled
+    backup_enabled: true
+    chaos_engineering: disabled # Disabled
+  security:
+    zero_trust: disabled # Disabled
+    encryption: Basic-TLS
+    audit_logging: basic
+  # ai_features and cloud_providers blocks are REMOVED entirely for stability,
+  # as they introduce non-production concepts to the main branch configuration.
