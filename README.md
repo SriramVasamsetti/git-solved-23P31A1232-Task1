@@ -40,4 +40,5 @@ A comprehensive CI/CD configuration management tool for enterprise deployments.
 ### Production Mode
 ```bash
 export DEPLOY_ENV=production
-./scripts/deploy.sh
+./scripts/deploy.sh"## FAQ" 
+"## FAQ" 
